@@ -11,8 +11,8 @@ import (
   "github.com/gutenye/fil"
   "github.com/BurntSushi/toml"
   "bytes"
-  "./shell"
   "github.com/fatih/color"
+  "github.com/gutenye/gutgen/shell"
 )
 
 func New(templateName, projectPath string) {

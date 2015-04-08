@@ -4,7 +4,7 @@ import (
   "fmt"
   "os"
   "github.com/codegangsta/cli"
-  "./shell"
+  "github.com/gutenye/gutgen/shell"
 )
 
 func main() {
