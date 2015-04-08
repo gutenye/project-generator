@@ -1,12 +1,12 @@
-Generator, a generic project generator, to create a project from templates.
+Gutgen, a generic project generator, to create a project from templates.
 ================
 
 |                |                                           |
 |----------------|------------------------------------------ |
-| Homepage:      | https://github.com/GutenYe/generator        |
+| Homepage:      | https://github.com/GutenYe/gutgen        |
 | Author:	       | Guten                                     |
 | License:       | MIT                                       |
-| Issue Tracker: | https://github.com/GutenYe/generator/issues |
+| Issue Tracker: | https://github.com/GutenYe/gutgen/issues |
 
 
 Copyright
