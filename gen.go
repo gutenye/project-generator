@@ -7,10 +7,10 @@ package main
 
 import (
   "os"
+  "bytes"
   "text/template"
   "github.com/gutenye/fil"
   "github.com/BurntSushi/toml"
-  "bytes"
   "github.com/fatih/color"
   "github.com/gutenye/gutgen/shell"
 )
@@ -25,7 +25,7 @@ func New(templateName, projectPath string) {
   rc["project"] = fil.Base(projectPath)
 
   shell.Say("      %s %s\n", color.CyanString("create"), projectPath)
-  if err := fil.Mkdir(projectPath, 0755); err != nil {
+  if err := fil.CpDirOnly(template, projectPath); err != nil {
     shell.ErrorExit(err)
   }
 
@@ -39,7 +39,7 @@ func New(templateName, projectPath string) {
     }
 
     relSrc, _ := fil.Rel(template, src)
-    relDest, err := executePathTemplate(relSrc, rc)
+    relDest, err := executeTemplate(relSrc, rc)
     if err != nil {
       shell.ErrorExit(err)
     }
@@ -48,7 +48,7 @@ func New(templateName, projectPath string) {
     shell.Say("      %s %s\n", color.CyanString("create"), dest)
     switch t := fil.TypeFileInfo(fi); t {
     case "dir":
-      if err := fil.Mkdir(dest, 0755); err != nil{
+      if err := fil.CpDirOnly(src, dest); err != nil{
         shell.ErrorExit(err)
       }
     case "symlink":
@@ -56,7 +56,7 @@ func New(templateName, projectPath string) {
         shell.ErrorExit(err)
       }
     case "regular":
-      if err := cpFileTemplate(src, dest, rc); err!= nil {
+      if err := cpFile(src, dest, rc); err!= nil {
         shell.ErrorExit(err)
       }
     default:
@@ -81,7 +81,7 @@ func loadRc(file string) map[string]string {
   return rc
 }
 
-func executePathTemplate(path string, data interface{}) (string, error) {
+func executeTemplate(path string, data interface{}) (string, error) {
   var buf bytes.Buffer
   tmpl, err := template.New("default").Parse(path)
   if err != nil {
@@ -91,7 +91,7 @@ func executePathTemplate(path string, data interface{}) (string, error) {
   return buf.String(), nil
 }
 
-func cpFileTemplate(src, dest string, data interface{}) error {
+func cpFile(src, dest string, data interface{}) error {
   tmpl, err := template.ParseFiles(src)
   if err != nil {
     return err
