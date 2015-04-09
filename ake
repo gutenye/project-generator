@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+case "$1" in
+  r | release ) go build *.go; mv gen ~/bin ;;
+esac
