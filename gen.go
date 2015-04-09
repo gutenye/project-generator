@@ -7,8 +7,7 @@ package main
 
 import (
   "os"
-  "bytes"
-  "text/template"
+  "github.com/jabley/mustache"
   "github.com/gutenye/fil"
   "github.com/BurntSushi/toml"
   "github.com/fatih/color"
@@ -39,10 +38,7 @@ func New(templateName, projectPath string) {
     }
 
     relSrc, _ := fil.Rel(template, src)
-    relDest, err := executeTemplate(relSrc, rc)
-    if err != nil {
-      shell.ErrorExit(err)
-    }
+    relDest := mustache.Render(relSrc, rc)
     dest := projectPath+"/"+relDest
 
     shell.Say("      %s %s\n", color.CyanString("create"), dest)
@@ -81,26 +77,15 @@ func loadRc(file string) map[string]string {
   return rc
 }
 
-func executeTemplate(path string, data interface{}) (string, error) {
-  var buf bytes.Buffer
-  tmpl, err := template.New("default").Parse(path)
-  if err != nil {
-    return "", err
-  }
-  tmpl.Execute(&buf, data)
-  return buf.String(), nil
-}
-
 func cpFile(src, dest string, data interface{}) error {
-  tmpl, err := template.ParseFiles(src)
+  fi, err := fil.Lstat(src)
   if err != nil {
     return err
   }
-  file, err := os.OpenFile(dest, os.O_WRONLY | os.O_CREATE | os.O_TRUNC, 0644)
-  if err != nil {
+  ret := mustache.RenderFile(src, data)
+  if err := fil.WriteFile(dest, []byte(ret), fi.Mode().Perm()); err != nil {
     return err
   }
-  tmpl.Execute(file, data)
   return nil
 }
 
