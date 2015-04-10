@@ -42,7 +42,11 @@ func Error(a ...interface{}) {
   } else {
     msg = arg(a...)
   }
-  color.Red(msg)
+  if os.Getenv("GUTGEN_DEBUG") != "" {
+    panic(msg)
+  } else {
+    color.Red(msg)
+  }
 }
 
 func ErrorExit(a ...interface{}) {
