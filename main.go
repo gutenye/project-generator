@@ -43,7 +43,13 @@ GLOBAL OPTIONS:
     }, {
       Name:      "add",
       Usage:     "add more templates in current directory",
-      Action: func(c *cli.Context) { },
+      Action: func(c *cli.Context) {
+        args := c.Args()
+        if len(args) < 1 {
+          shell.ErrorExit("arguments length < 1\nUSAGE: gutgen add <template> [name]")
+        }
+        Add(args.Get(0), args.Get(1))
+      },
     },
     {
       Name:      "list",

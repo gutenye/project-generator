@@ -17,48 +17,11 @@ import (
   "github.com/gutenye/gutgen/shell"
 )
 
+var rc map[string]interface{}
 var mustacheHelpers map[string]interface{}
 
-func initialize() {
-  mustacheHelpers = map[string]interface{}{
-    "var": func(text string, render mustache.RenderFunc) string {
-      lines := strings.Split(text, "\n")
-      for _, line := range lines {
-        // skip empty lines
-        if line == "" {
-          continue
-        }
-        if strings.Contains(line, " ||= ") {
-          parts := strings.Split(line, " ||= ")
-          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-          if _, ok := mustacheHelpers[name]; !ok {
-            mustacheHelpers[name] = render(value)
-          }
-        } else {
-          parts := strings.Split(line, " = ")
-          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-          mustacheHelpers[name] = render(value)
-        }
-      }
-      return ""
-    },
-
-    "year": func() string {
-      return fmt.Sprintf("%v", time.Now().Year())
-    },
-  }
-}
-
 func New(templateName, projectPath string) {
-  initialize()
-  appDir := os.Getenv("HOME")+"/.gutgen"
-  template := appDir+"/"+templateName
-  if ok, _ := fil.IsNotExist(template); ok {
-    shell.ErrorExit("template does not exists -- "+template)
-  }
-
-  rc := loadRc(os.Getenv("HOME") + "/.gutgenrc")
-  rc["project"] = fil.Base(projectPath)
+  template := initialize(templateName, projectPath)
 
   shell.Say("      %s %s\n", color.CyanString("create"), projectPath)
   if err := fil.CpDirOnly(template, projectPath); err != nil {
@@ -102,6 +65,21 @@ func New(templateName, projectPath string) {
   }
 }
 
+func Add(templateName, name string) {
+  template := initialize(templateName, name)
+  if name == "" { name = templateName }
+  shell.Say("      %s %s\n", color.CyanString("create"), name)
+  if err := cpFile(template, name, rc); err!= nil {
+    shell.ErrorExit(err)
+  }
+}
+
+/*
+func List() []string {
+  return
+}
+*/
+
 func loadRc(file string) (ret map[string]interface{}) {
   if ok, _ := fil.IsNotExist(file); ok {
     return map[string]interface{}{}
@@ -129,8 +107,43 @@ func cpFile(src, dest string, data interface{}) error {
   return nil
 }
 
-/*
-func List() []string {
-  return
+func initialize(templateName, projectPath string) string {
+  mustacheHelpers = map[string]interface{}{
+    "var": func(text string, render mustache.RenderFunc) string {
+      lines := strings.Split(text, "\n")
+      for _, line := range lines {
+        // skip empty lines
+        if line == "" {
+          continue
+        }
+        if strings.Contains(line, "||=") {
+          parts := strings.Split(line, "||=")
+          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+          if _, ok := mustacheHelpers[name]; !ok {
+            mustacheHelpers[name] = render(value)
+          }
+        } else {
+          parts := strings.Split(line, "=")
+          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+          mustacheHelpers[name] = render(value)
+        }
+      }
+      return ""
+    },
+
+    "year": func() string {
+      return fmt.Sprintf("%v", time.Now().Year())
+    },
+  }
+
+  appDir := os.Getenv("HOME")+"/.gutgen"
+  template := appDir+"/"+templateName
+  if ok, _ := fil.IsNotExist(template); ok {
+    shell.ErrorExit("template does not exists -- "+template)
+  }
+
+  rc = loadRc(os.Getenv("HOME") + "/.gutgenrc")
+  rc["project"] = fil.Base(projectPath)
+
+  return template
 }
-*/
