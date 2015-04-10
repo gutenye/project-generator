@@ -28,9 +28,17 @@ func initialize() {
         if line == "" {
           continue
         }
-        parts := strings.Split(line, " = ")
-        name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-        mustacheHelpers[name] = render(value)
+        if strings.Contains(line, " ||= ") {
+          parts := strings.Split(line, " ||= ")
+          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+          if _, ok := mustacheHelpers[name]; !ok {
+            mustacheHelpers[name] = render(value)
+          }
+        } else {
+          parts := strings.Split(line, " = ")
+          name, value := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+          mustacheHelpers[name] = render(value)
+        }
       }
       return ""
     },
