@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 case "$1" in
-  r | release ) go build *.go; mv gen ~/bin ;;
+  r | release ) go build *.go; mv gen ~/bin/gutgen ;;
   t | test ) GUTGEN_DEBUG=1 go run *.go new a b ;;
 esac

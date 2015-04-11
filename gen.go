@@ -108,6 +108,8 @@ func cpFile(src, dest string, data interface{}) error {
 }
 
 func initialize(templateName, projectPath string) string {
+  mustache.Otag, mustache.Ctag = "%%", "%%"
+
   mustacheHelpers = map[string]interface{}{
     "var": func(text string, render mustache.RenderFunc) string {
       lines := strings.Split(text, "\n")
