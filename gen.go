@@ -1,20 +1,16 @@
 package main
 
-/*
- * rc map[string]string
- *
- */
-
 import (
   "os"
   "time"
   "fmt"
   "strings"
-  "github.com/gutenye/mustache"
-  "github.com/gutenye/fil"
+  "github.com/gutengo/tagen/strings2"
+  "github.com/gutengo/fil"
+  "github.com/gutengo/shell"
+  "github.com/gutengo/mustache"
   "github.com/BurntSushi/toml"
   "github.com/fatih/color"
-  "github.com/gutenye/gutgen/shell"
 )
 
 var rc map[string]interface{}
@@ -145,7 +141,9 @@ func initialize(templateName, projectPath string) string {
   }
 
   rc = loadRc(os.Getenv("HOME") + "/.gutgenrc")
-  rc["project"] = fil.Base(projectPath)
+  project := fil.Base(projectPath)
+  rc["project"] = project
+  rc["Project"] = strings2.ClassCase(project)
 
   return template
 }
