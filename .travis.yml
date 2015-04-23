@@ -14,5 +14,6 @@ deploy:
   api_key:
     secure: v9vtnml6VExrlakBqK47kgd+fCVmX9hEd5NsCCjvy98yQlnoUgHhn/8JjgKrjL/ygCmfCjVLfu2+pGyi4B/03gIFsDUd3WFHEcpkl1ENIW679XaFyJ5VS2mcS0w17NVRXi8S9OirmUqOHab0P9uUr+osi5wFhn+wCoZx2LbnOnQ=
   file: gutgen
+  skip_cleanup: true
   on:
     tags: true
