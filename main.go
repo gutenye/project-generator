@@ -22,7 +22,7 @@ GLOBAL OPTIONS:
 `
 
   app := cli.NewApp()
-  app.Name = "gutgen"
+  app.Name = "gutgenerator"
   app.Usage = "a generic project generator"
   app.Version = "0.0.1"
 
@@ -36,7 +36,7 @@ GLOBAL OPTIONS:
       Usage:     "create a new project",
       Action: func(c *cli.Context) {
         if len(c.Args()) < 2 {
-          shell.ErrorExit("arguments length < 2\nUSAGE: gutgen new <template> <project>")
+          shell.ErrorExit("arguments length < 2\nUSAGE: gutgenerator new <template> <project>")
         }
         New(c.Args()[0], c.Args()[1])
       },
@@ -46,7 +46,7 @@ GLOBAL OPTIONS:
       Action: func(c *cli.Context) {
         args := c.Args()
         if len(args) < 1 {
-          shell.ErrorExit("arguments length < 1\nUSAGE: gutgen add <template> [name]")
+          shell.ErrorExit("arguments length < 1\nUSAGE: gutgenerator add <template> [name]")
         }
         Add(args.Get(0), args.Get(1))
       },

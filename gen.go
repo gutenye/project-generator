@@ -134,13 +134,13 @@ func initialize(templateName, projectPath string) string {
     },
   }
 
-  appDir := os.Getenv("HOME")+"/.gutgen"
+  appDir := os.Getenv("HOME")+"/.gutgenerator"
   template := appDir+"/"+templateName
   if ok, _ := fil.IsNotExist(template); ok {
     shell.ErrorExit("template does not exists -- "+template)
   }
 
-  rc = loadRc(os.Getenv("HOME") + "/.gutgenrc")
+  rc = loadRc(os.Getenv("HOME") + "/.gutgeneratorrc")
   project := fil.Base(projectPath)
   rc["project"] = project
   rc["Project"] = strings2.ClassCase(project)
